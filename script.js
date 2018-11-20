@@ -51,7 +51,7 @@ const fullScript = [
     "Am I dreaming",
     "The creature keeps on inserting her head then her tail into that sack",
     "I understand what to do",
-    "The End",
+    "It is the end of the story",
     "Or Another Beginning"
 ];
 
@@ -85,13 +85,14 @@ const getSpeech = () => {
         // detectedSpeech = speechResult;
 
         console.log(speechResult);
-        if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(fullScript[line]))) {
-            refinedSpeech = fullScript[line];
-            console.log(refinedSpeech);
-            line++;
-            charFrame = 0;
-            if (line == 1) changeScene(1);
-            // checkCurrentScene();
+        if (line < 47) {
+            if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(fullScript[line]))) {
+                refinedSpeech = fullScript[line];
+                console.log(refinedSpeech);
+                line++;
+                charFrame = 0;
+                if (line == 1) changeScene(1);
+            }
         }
 
     };
@@ -193,7 +194,12 @@ let dialogSketch = function (p) {
 
             if (scene == 0) {
                 title = "Hope for the Flowers";
-            } else if (scene == 8) {
+            } else if (line == 46) {
+                title = "The End";
+                /* if (title = "It's the End") {
+                    title = "The End";
+                } */
+            } else if (line == 47) {
                 title = refinedSpeech;
             }
 
@@ -275,7 +281,7 @@ let dialogSketch = function (p) {
                 }
             }
 
-            // typing ...
+            // live typing ...
             /* for (let i = 0; i < charFrame; i++) {
                 ch = refinedSpeech[i];
                 if (chars.hasOwnProperty(ch)) {
@@ -322,6 +328,9 @@ let drawingSketch = function (p) {
     let waitShort = 2000;
     let waitLong = 3000;
 
+    let lineColor = 150;
+    let prevLineColor = 230;
+
     p.preload = function () {
         jsons.push(p.loadJSON("assets/scene1.json"));
         jsons.push(p.loadJSON("assets/scene2.json"));
@@ -335,7 +344,7 @@ let drawingSketch = function (p) {
 
     p.setup = function () {
         p.createCanvas(p.windowWidth, p.windowHeight);
-        p.stroke(150, 150, 150);
+        p.stroke(lineColor);
         p.strokeCap(p.ROUND);
         p.strokeJoin(p.ROUND);
         p.strokeWeight(2);
@@ -420,60 +429,63 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        if (currentLayer < 7) {
 
-            // layer 1 (Stripe)
-            const layer1 = s1[1];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[1]; i++) {
-                let vtx = layer1[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
-            // layer 2 (Fluffy)
-            const layer2 = s1[2];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[2]; i++) {
-                let vtx = layer2[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
-            // layer 3
-            const layer3 = s1[3];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[3]; i++) {
-                let vtx = layer3[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
-            const layer4 = s1[4];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[4]; i++) {
-                let vtx = layer4[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
-            const layer5 = s1[5];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[5]; i++) {
-                let vtx = layer5[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
-            const layer6 = s1[6];
-            p.beginShape();
-            for (let i = 0; i < drawFrames[6]; i++) {
-                let vtx = layer6[i];
-                p.vertex(vtx.x, vtx.y);
-            }
-            p.endShape();
-
+        if (currentLayer > 6) {
+            p.stroke(prevLineColor);
         }
+
+        // layer 1 (Stripe)
+        const layer1 = s1[1];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[1]; i++) {
+            let vtx = layer1[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
+
+        // layer 2 (another catarpiller)
+        const layer2 = s1[2];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[2]; i++) {
+            let vtx = layer2[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
+
+        // layer 3
+        const layer3 = s1[3];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[3]; i++) {
+            let vtx = layer3[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
+
+        const layer4 = s1[4];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[4]; i++) {
+            let vtx = layer4[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
+
+        p.stroke(lineColor);
+
+        const layer5 = s1[5];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[5]; i++) {
+            let vtx = layer5[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
+
+        const layer6 = s1[6];
+        p.beginShape();
+        for (let i = 0; i < drawFrames[6]; i++) {
+            let vtx = layer6[i];
+            p.vertex(vtx.x, vtx.y);
+        }
+        p.endShape();
 
         const layer7 = s1[7];
         p.beginShape();
@@ -546,8 +558,7 @@ let drawingSketch = function (p) {
 
                     // There’s only one thing to do
                     case 8:
-                        // p.background(255);
-                        p.clear();
+                        // p.clear();
                         currentLayer = 7;
                         console.log("Start drawing layer #" + currentLayer);
                         break;
@@ -571,6 +582,11 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+
+        if (currentLayer > 7) {
+            p.stroke(prevLineColor);
+        }
+        // stripe
         const layer1 = s2[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -579,6 +595,12 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+
+        if (currentLayer > 6) {
+            p.stroke(prevLineColor);
+        }
+
+        // fluffy
         const layer2 = s2[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -586,6 +608,9 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+
+        p.stroke(lineColor);
 
         const layer3 = s2[3];
         p.beginShape();
@@ -603,6 +628,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        if (currentLayer > 6) {
+            p.stroke(prevLineColor);
+        }
+        // fluffy loves stripe
         const layer5 = s2[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -611,6 +640,12 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.stroke(lineColor);
+
+        if (currentLayer > 7) {
+            p.stroke(prevLineColor);
+        }
+        // stripe loves fluffy
         const layer6 = s2[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -618,6 +653,8 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+        p.stroke(lineColor);
 
         const layer7 = s2[7];
         p.beginShape();
@@ -638,11 +675,11 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s2[currentLayer].length) {
-            if (currentLayer == 1 || currentLayer == 8) {
+            if (currentLayer == 1 || currentLayer == 4 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
             else drawFrames[currentLayer] += 2;
-            // p.constrain(drawFrames[currentLayer], 0, s1[currentLayer].length);
+
             if (drawFrames[currentLayer] > s2[currentLayer].length) {
                 drawFrames[currentLayer] = s2[currentLayer].length;
             }
@@ -697,6 +734,7 @@ let drawingSketch = function (p) {
 
                     // Let’s go down
                     case 15:
+                        // p.clear();
                         currentLayer = 7;
                         console.log("Start drawing layer #" + currentLayer);
                         break;
@@ -892,7 +930,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s4[currentLayer].length) {
-            if (currentLayer == 1) {
+            if (currentLayer == 1 || currentLayer == 3) {
                 drawFrames[currentLayer] += 4;
             }
             else drawFrames[currentLayer] += 2;
@@ -981,6 +1019,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        if (currentLayer > 4) {
+            p.stroke(prevLineColor);
+        }
+
         const layer1 = s5[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -988,6 +1030,8 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+        p.stroke(lineColor);
 
         const layer2 = s5[2];
         p.beginShape();
@@ -1005,6 +1049,11 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        if (currentLayer > 7) {
+            p.stroke(prevLineColor);
+        }
+
+        // many other pillars
         const layer4 = s5[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -1012,6 +1061,8 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+        p.stroke(lineColor);
 
         const layer5 = s5[5];
         p.beginShape();
@@ -1021,6 +1072,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        if (currentLayer > 7) {
+            p.stroke(prevLineColor);
+        }
+
         const layer6 = s5[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -1028,6 +1083,8 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+        p.stroke(lineColor);
 
         const layer7 = s5[7];
         p.beginShape();
@@ -1048,7 +1105,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s5[currentLayer].length) {
-            if (currentLayer == 1 || currentLayer == 5 || currentLayer == 8) {
+            if (currentLayer == 1 || currentLayer == 4 || currentLayer == 5 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
             else drawFrames[currentLayer] += 2;
