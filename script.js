@@ -255,9 +255,7 @@ let dialogSketch = function (p) {
             p.translate(transX, transY);
             p.stroke(r, g, b, 128);
 
-            // for (let ch of refinedSpeech) {
-            for (let i = 0; i < charFrame; i++) {
-                ch = refinedSpeech[i];
+            for (let ch of refinedSpeech) {
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
                     p.noFill();
@@ -277,9 +275,32 @@ let dialogSketch = function (p) {
                 }
             }
 
+            // typing ...
+            /* for (let i = 0; i < charFrame; i++) {
+                ch = refinedSpeech[i];
+                if (chars.hasOwnProperty(ch)) {
+                    let form = p.random(chars[ch]);
+                    p.noFill();
+                    for (let stroke of form) {
+                        p.beginShape();
+                        for (let coord of stroke) {
+                            p.vertex(xoff + (coord[0] * 0.1),
+                                yoff + (coord[1] * 0.1));
+                        }
+                        p.endShape();
+                    }
+                }
+                xoff += charWidth;
+                if (xoff > lineBlockWidth) {
+                    xoff = 0;
+                    yoff += charHeight;
+                }
+            } 
+
             if (charFrame < refinedSpeech.length) {
                 charFrame++;
             }
+            */
         }
 
     };
@@ -298,7 +319,8 @@ let drawingSketch = function (p) {
 
     let jsons = [];
 
-    let waitTime = 2000;
+    let waitShort = 2000;
+    let waitLong = 3000;
 
     p.preload = function () {
         jsons.push(p.loadJSON("assets/scene1.json"));
@@ -482,7 +504,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(2);
-                }, waitTime);
+                }, waitLong);
             }
             else {
                 switch (line) {
@@ -616,10 +638,10 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s2[currentLayer].length) {
-            /* if (currentLayer == 1) {
+            if (currentLayer == 1 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
-            else */ drawFrames[currentLayer] += 2;
+            else drawFrames[currentLayer] += 2;
             // p.constrain(drawFrames[currentLayer], 0, s1[currentLayer].length);
             if (drawFrames[currentLayer] > s2[currentLayer].length) {
                 drawFrames[currentLayer] = s2[currentLayer].length;
@@ -633,7 +655,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(3);
-                }, waitTime);
+                }, waitShort);
             }
             else {
                 switch (line) {
@@ -740,10 +762,10 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s3[currentLayer].length) {
-            /* if (currentLayer == 1) {
+            if (currentLayer == 2) {
                 drawFrames[currentLayer] += 4;
             }
-            else */ drawFrames[currentLayer] += 2;
+            else drawFrames[currentLayer] += 2;
 
             if (drawFrames[currentLayer] > s3[currentLayer].length) {
                 drawFrames[currentLayer] = s3[currentLayer].length;
@@ -757,7 +779,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(4);
-                }, waitTime);
+                }, waitShort);
             }
             else {
                 switch (line) {
@@ -870,10 +892,10 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s4[currentLayer].length) {
-            /* if (currentLayer == 1) {
+            if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
-            else */ drawFrames[currentLayer] += 2;
+            else drawFrames[currentLayer] += 2;
 
             if (drawFrames[currentLayer] > s4[currentLayer].length) {
                 drawFrames[currentLayer] = s4[currentLayer].length;
@@ -887,7 +909,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(5);
-                }, waitTime);
+                }, waitShort);
             }
             else {
                 switch (line) {
@@ -1026,10 +1048,10 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s5[currentLayer].length) {
-            /* if (currentLayer == 1) {
+            if (currentLayer == 1 || currentLayer == 5 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
-            else */ drawFrames[currentLayer] += 2;
+            else drawFrames[currentLayer] += 2;
 
             if (drawFrames[currentLayer] > s5[currentLayer].length) {
                 drawFrames[currentLayer] = s5[currentLayer].length;
@@ -1043,7 +1065,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(6);
-                }, waitTime);
+                }, waitLong);
             }
             else {
                 switch (line) {
@@ -1155,10 +1177,10 @@ let drawingSketch = function (p) {
         p.endShape();
 
         if (drawFrames[currentLayer] < s6[currentLayer].length) {
-            /* if (currentLayer == 1) {
+            if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
-            else */ drawFrames[currentLayer] += 2;
+            else drawFrames[currentLayer] += 2;
 
             if (drawFrames[currentLayer] > s6[currentLayer].length) {
                 drawFrames[currentLayer] = s6[currentLayer].length;
@@ -1172,7 +1194,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(7);
-                }, waitTime);
+                }, waitLong);
             }
             else {
                 switch (line) {
@@ -1274,7 +1296,7 @@ let drawingSketch = function (p) {
                 setTimeout(() => {
                     p.clear();
                     changeScene(8);
-                }, waitTime);
+                }, waitLong);
             }
             else {
                 switch (line) {
