@@ -1,0 +1,43 @@
+#dialog-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+#drawing-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+/* 
+#stripe-speech {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 500px;
+    visibility: none;
+} 
+
+#fluffy-speech {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 500px;
+    visibility: none;
+}
+
+#others-speech {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 500px;
+    visibility: none;
+}
+ */
+#title {
+    position: relative;
+    margin: auto;
+    visibility: visible;
+}
