@@ -1,7 +1,7 @@
 const SpeechRecognition = webkitSpeechRecognition;
 
 const speaker = [
-    "t", "s", "s", "o", "o", "s", "o", "s", "s", "f", "f", "s", "f", "s", "f", "s", "f", "s", "s", "f", "s", "f", "s", "f", "f", "s", "s", "f",
+    "t", "s", "s", "o", "o", "s", "o", "s", "s", "y", "y", "s", "y", "s", "y", "s", "y", "s", "s", "y", "s", "y", "s", "y", "y", "s", "s", "y",
     "s", "o", "o", "o", "s", "s", "s", "s", "s", "o", "s", "o", "s", "s", "s", "s", "s"
 ];
 
@@ -23,7 +23,7 @@ const fullScript = [
     "Let’s go down",
     "Okay",
     "Hi Stripe",
-    "Hi Fluffy",
+    "Hi Yellow",
     "Staying together like this is different from being crushed in that crowd",
     "It really is",
     "There must be still more to life",
@@ -41,7 +41,7 @@ const fullScript = [
     "My pillar, only one of thousands",
     "Millions of caterpillars climbing nowhere",
     "Maybe she was right. I wish I stayed with her...",
-    "Fluffy. Is that you",
+    "Yellow. Is that you",
     "I’ve been up. There’s nothing there",
     "I bet he never made it to the top",
     "There’s nothing at the top and it doesn’t matter",
@@ -58,7 +58,6 @@ const fullScript = [
 
 let chars;
 
-// let detectedSpeech;
 let refinedSpeech;
 
 let scenes = [];
@@ -136,7 +135,6 @@ function isThisLineCorrect(speech, target) {
 function changeScene(s) {
     let bgVertices = [2743, 2248, 2159, 3418, 1288, 2409, 2467];
 
-    scene = s;
     refinedSpeech = '';
 
     if (s < 8) {
@@ -147,6 +145,8 @@ function changeScene(s) {
             drawFrames.push(0);
         }
     }
+
+    scene = s;
 
 }
 
@@ -181,14 +181,14 @@ let dialogSketch = function (p) {
 
     p.draw = function () {
 
-        p.background(255, 64);
+        p.background(0, 64);
 
 
         let xoff = 0;
         let yoff = 0;
 
         if (line == 0 || line > 45) {
-            p.stroke(0, 0, 90, 128);
+            p.stroke(190, 128);
 
             let title;
 
@@ -231,30 +231,30 @@ let dialogSketch = function (p) {
             const margin = 100;
 
             let transX, transY;
-            let r, g, b;
+            let c;
             let lineBlockWidth = 500;
 
             switch (speaker[line - 1]) {
                 case 's':
                     transX = margin;
                     transY = margin;
-                    r = 0;
-                    g = 0;
-                    b = 90;
+                    r = 220;
+                    g = 220;
+                    b = 220;
                     break;
-                case 'f':
+                case 'y':
                     transX = p.windowWidth - lineBlockWidth - (margin / 2);
                     transY = margin;
-                    r = 90;
-                    g = 0;
-                    b = 90;
+                    r = 220;
+                    g = 220;
+                    b = 0;
                     break;
                 default:
                     transX = p.windowWidth - lineBlockWidth - (margin / 2);
                     transY = margin;
-                    r = 100;
-                    g = 100;
-                    b = 100;
+                    r = 220;
+                    g = 220;
+                    b = 220;
                     break;
             }
 
@@ -326,10 +326,15 @@ let drawingSketch = function (p) {
     let jsons = [];
 
     let waitShort = 2000;
-    let waitLong = 3000;
+    let waitLong = 2000;
 
-    let lineColor = 150;
-    let prevLineColor = 230;
+    let bgStrokeWeight = 1;
+    let mainStrokeWeight = 2;
+
+    let bgColor = 100;
+    let mainColor = 225;
+    let prevLineColor = 30;
+    let yellowColor = p.color(255, 255, 0);
 
     p.preload = function () {
         jsons.push(p.loadJSON("assets/scene1.json"));
@@ -344,10 +349,10 @@ let drawingSketch = function (p) {
 
     p.setup = function () {
         p.createCanvas(p.windowWidth, p.windowHeight);
-        p.stroke(lineColor);
+        // p.stroke(mainColor);
         p.strokeCap(p.ROUND);
         p.strokeJoin(p.ROUND);
-        p.strokeWeight(2);
+        // p.strokeWeight(1);
         p.noFill();
 
         // converts json data to a 3d array
@@ -421,6 +426,8 @@ let drawingSketch = function (p) {
 
 
         // layer 0 (background)
+        p.stroke(bgColor);
+        p.strokeWeight(bgStrokeWeight);
         const layer0 = s1[0];
         p.beginShape();
         for (let i = 0; i < layer0.length; i++) {
@@ -429,12 +436,14 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
 
+        // "Hello world"
         if (currentLayer > 6) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(mainColor);
         }
-
-        // layer 1 (Stripe)
         const layer1 = s1[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -443,7 +452,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // layer 2 (another catarpiller)
+        // "Do you know what is happening?"
         const layer2 = s1[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -452,7 +461,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // layer 3
+        // "I just arrived myself"
         const layer3 = s1[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -461,6 +470,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Nobody has time to explain. They’re so busy trying to go up there"
         const layer4 = s1[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -469,8 +479,13 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
-
+        // "But what’s at the top?"
+        p.strokeWeight(bgStrokeWeight);
+        if (currentLayer > 6) {
+            p.stroke(prevLineColor);
+        } else {
+            p.stroke(bgColor);
+        }
         const layer5 = s1[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -479,6 +494,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "No one knows but it must be awfully good because everybody’s rushing there. Goodbye."
         const layer6 = s1[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -487,6 +503,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "There’s only one thing to do"
+        p.strokeWeight(mainStrokeWeight);
+        p.stroke(mainColor);
         const layer7 = s1[7];
         p.beginShape();
         for (let i = 0; i < drawFrames[7]; i++) {
@@ -574,6 +593,9 @@ let drawingSketch = function (p) {
     function drawScene2() {
         const s2 = scenes[1];
 
+        // background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s2[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -583,10 +605,12 @@ let drawingSketch = function (p) {
         p.endShape();
 
 
+        p.strokeWeight(mainStrokeWeight);
+        p.stroke(mainColor);
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
         }
-        // stripe
+        // stripe "Where are we going"
         const layer1 = s2[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -595,12 +619,13 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-
+        // yellow "You know, I was wondering that myself but there is no way to find out"
         if (currentLayer > 6) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(yellowColor);
         }
 
-        // fluffy
         const layer2 = s2[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -610,7 +635,9 @@ let drawingSketch = function (p) {
         p.endShape();
 
 
-        p.stroke(lineColor);
+        // "How far are we from the top?""
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
 
         const layer3 = s2[3];
         p.beginShape();
@@ -620,6 +647,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Since we’re not at the bottom and not at the top we must be in the middle"
         const layer4 = s2[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -628,10 +656,14 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "Oh, now when you look at me so kindly, I know for sure I don’t like this life"
         if (currentLayer > 6) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(yellowColor);
         }
-        // fluffy loves stripe
         const layer5 = s2[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -640,12 +672,14 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
 
+        // "Same here"
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(mainColor);
         }
-        // stripe loves fluffy
+
         const layer6 = s2[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -654,7 +688,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
+
+        // "Let’s go down"
+        p.stroke(yellowColor);
 
         const layer7 = s2[7];
         p.beginShape();
@@ -663,6 +699,9 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
+
+        // "Okay"
+        p.stroke(mainColor);
 
         const layer8 = s2[8];
         p.beginShape();
@@ -757,6 +796,8 @@ let drawingSketch = function (p) {
         const s3 = scenes[2];
 
         // layer0: background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s3[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -765,6 +806,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "Hi Stripe"
+        p.stroke(yellowColor);
         const layer1 = s3[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -773,6 +818,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Hi Yellow"
+        p.stroke(mainColor);
         const layer2 = s3[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -781,6 +828,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Staying together like this is different from being crushed in that crowd"
         const layer3 = s3[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -789,6 +837,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "It really is"
+        p.stroke(yellowColor);
         const layer4 = s3[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -827,7 +877,7 @@ let drawingSketch = function (p) {
                         console.log("Start drawing layer #" + currentLayer);
                         break;
 
-                    // Hi Fluffy
+                    // Hi Yellow
                     case 18:
                         currentLayer = 2;
                         console.log("Start drawing layer #" + currentLayer);
@@ -855,6 +905,9 @@ let drawingSketch = function (p) {
     function drawScene4() {
         const s4 = scenes[3];
 
+        // layer0: Background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s4[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -863,6 +916,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "There must be still more to life"
+        p.stroke(mainColor);
         const layer1 = s4[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -871,6 +928,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Just think how much better this is than that awful mess we have left"
+        p.stroke(yellowColor);
         const layer2 = s4[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -879,6 +938,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "But we don’t know what’s at the top"
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer3 = s4[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -887,6 +949,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Please, my love"
+        p.strokeWeight(mainStrokeWeight);
+        p.stroke(yellowColor);
         const layer4 = s4[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -895,6 +960,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "We can have a nice home and we love each other and that’s enough"
         const layer5 = s4[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -903,6 +969,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "I’ve got to know. I must go and find out the secret of the top."
+        p.stroke(mainColor);
         const layer6 = s4[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -911,6 +979,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Will you come and help me"
         const layer7 = s4[7];
         p.beginShape();
         for (let i = 0; i < drawFrames[7]; i++) {
@@ -919,7 +988,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        //"No"
         const layer8 = s4[8];
+        p.stroke(yellowColor);
         p.beginShape();
         for (let i = 0; i < drawFrames[8]; i++) {
             let vtx = layer8[i];
@@ -1011,6 +1082,9 @@ let drawingSketch = function (p) {
     function drawScene5() {
         const s5 = scenes[4];
 
+        // background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s5[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -1019,10 +1093,14 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "Don’t blame me if you don’t succeed! It’s a tough life"
         if (currentLayer > 4) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(mainColor);
         }
-
         const layer1 = s5[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -1031,8 +1109,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
-
+        // "There’s nothing here at all"
+        p.stroke(mainColor);
         const layer2 = s5[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -1041,6 +1119,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Be quiet! They can hear you down the pillar."
         const layer3 = s5[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -1049,11 +1128,13 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Look over there! There are so many other pillars"
+        p.strokeWeight(bgStrokeWeight);
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(bgColor);
         }
-
-        // many other pillars
         const layer4 = s5[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -1062,8 +1143,9 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
-
+        // "My pillar, only one of thousands"
+        p.strokeWeight(mainStrokeWeight);
+        p.stroke(mainColor);
         const layer5 = s5[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -1072,10 +1154,13 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Millions of caterpillars climbing nowhere"
+        p.strokeWeight(bgStrokeWeight);
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
+        } else {
+            p.stroke(bgColor);
         }
-
         const layer6 = s5[6];
         p.beginShape();
         for (let i = 0; i < drawFrames[6]; i++) {
@@ -1084,8 +1169,13 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        p.stroke(lineColor);
-
+        // "Maybe she was right. I wish I stayed with her…"
+        p.strokeWeight(mainStrokeWeight);
+        if (currentLayer > 7) {
+            p.stroke(prevLineColor);
+        } else {
+            p.stroke(yellowColor);
+        }
         const layer7 = s5[7];
         p.beginShape();
         for (let i = 0; i < drawFrames[7]; i++) {
@@ -1094,6 +1184,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Yellow? Is that you?"
+        p.stroke(yellowColor);
         const layer8 = s5[8];
         p.beginShape();
         for (let i = 0; i < drawFrames[8]; i++) {
@@ -1168,7 +1260,7 @@ let drawingSketch = function (p) {
                         console.log("Start drawing layer #" + currentLayer);
                         break;
 
-                    // Fluffy. Is that you
+                    // Yellow. Is that you
                     case 36:
                         // p.clear();
                         currentLayer = 8;
@@ -1185,6 +1277,9 @@ let drawingSketch = function (p) {
     function drawScene6() {
         const s6 = scenes[5];
 
+        // background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s6[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -1193,6 +1288,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "I’ve been up; there’s nothing there"
+        p.stroke(mainColor);
         const layer1 = s6[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -1201,6 +1300,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "I bet he never made it to the top"
         const layer2 = s6[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -1209,6 +1309,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "There’s nothing at the top and it doesn’t matter"
         const layer3 = s6[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -1217,6 +1318,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Don’t say it even if it’s true. What else can we do"
         const layer4 = s6[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
@@ -1225,6 +1327,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Perhaps he’s right, I don’t have any proof"
         const layer5 = s6[5];
         p.beginShape();
         for (let i = 0; i < drawFrames[5]; i++) {
@@ -1295,6 +1398,9 @@ let drawingSketch = function (p) {
     function drawScene7() {
         const s7 = scenes[6];
 
+        // background
+        p.strokeWeight(bgStrokeWeight);
+        p.stroke(bgColor);
         const layer0 = s7[0];
         p.beginShape();
         for (let i = 0; i < drawFrames[0]; i++) {
@@ -1303,6 +1409,10 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        p.strokeWeight(mainStrokeWeight);
+
+        // "I came down, but what else can I do now"
+        p.stroke(mainColor);
         const layer1 = s7[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -1311,6 +1421,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "Am I dreaming"
+        p.stroke(yellowColor);
         const layer2 = s7[2];
         p.beginShape();
         for (let i = 0; i < drawFrames[2]; i++) {
@@ -1319,6 +1431,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "The creature keeps on inserting her head, then her tail, into that sack"
         const layer3 = s7[3];
         p.beginShape();
         for (let i = 0; i < drawFrames[3]; i++) {
@@ -1327,6 +1440,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
+        // "I understand what to do"
+        p.stroke(mainColor);
         const layer4 = s7[4];
         p.beginShape();
         for (let i = 0; i < drawFrames[4]; i++) {
