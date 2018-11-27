@@ -336,7 +336,7 @@ let drawingSketch = function (p) {
     let waitLong = 1000;
 
     let bgStrokeWeight = 1;
-    let mainStrokeWeight = 2;
+    let mainStrokeWeight = 1;
 
     let bgColor = 100;
     let mainColor = 225;
