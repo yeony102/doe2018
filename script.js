@@ -194,6 +194,8 @@ let dialogSketch = function (p) {
 
             if (scene == 0) {
                 title = "Hope for the Flowers";
+            } else if (line == 46) {
+                title = stts[45];
             } else {
                 title = line4print;
             }
@@ -330,8 +332,8 @@ let drawingSketch = function (p) {
 
     let jsons = [];
 
-    let waitShort = 2000;
-    let waitLong = 2000;
+    let waitShort = 1000;
+    let waitLong = 1000;
 
     let bgStrokeWeight = 1;
     let mainStrokeWeight = 2;
