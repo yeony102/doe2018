@@ -10,17 +10,17 @@ const script2stt = {
     "Hello world": "Hello world",
     "Do you know what is happening": "Do you know what is/happening",
     "I just arrived myself": "I just arrived myself",
-    "Nobody has time to explain. They're so busy trying to go up there": "Nobody has time to explain.They are so busy trying to go up there",
-    "But what’s at the top": "But what is at the top",
-    "No one knows but it must be awfully good because everybody’s rushing there. Goodbye.": "No one knows but it must/be awfully good because/everybody’s rushing there/Goodbye",
-    "There’s only one thing to do": "There is only one thing/to do",
+    "Nobody has time to explain They're so busy trying to go up there": "Nobody has time to explain.They are so busy trying to go up there",
+    "But what's at the top": "But what is at the top",
+    "No one knows but it must be awfully good because everybody's rushing there Goodbye": "No one knows but it must/be awfully good because/everybody’s rushing there/Goodbye",
+    "There's only one thing to do": "There is only one thing/to do",
     "Where are we going": "Where are we going",
-    "You know, I was wondering that myself but there is no way to find out": "You know I was wondering/that myself but there is/no way to find out",
+    "You know I was wondering that myself but there is no way to find out": "You know I was wondering/that myself but there is/no way to find out",
     "How far are we from the top": "How far are we from the/top",
     "Since we’re not at the bottom and not at the top we must be in the middle": "Since we are not at the/bottom and not at the/top we must be in the/middle",
-    "Oh, Now when you look at me so kindly, I know for sure I don’t like this life": "Oh, Now when you look at me so kindly, I know for sure I don’t like this life",
+    "Oh Now when you look at me so kindly I know for sure I don't like this life": "Oh, Now when you look at me so kindly, I know for sure I don’t like this life",
     "Same here": "Same here",
-    "Let’s go down": "           Let’s go down",
+    "Let's go down": "           Let’s go down",
     "Okay": "Okay",
     "Hi Stripe": "            Hi Stripe",
     "Hi Yellow": "Hi Yellow",
@@ -28,26 +28,26 @@ const script2stt = {
     "It really is": "         It really is",
     "There must be still more to life": "There must be still more/to life",
     "Just think how much better this is than that awful mess we have left": "Just think how much better this is than that awful/mess we have left",
-    "But we don’t know what’s at the top": "But we don’t know what is/at the top",
+    "But we don't know what's at the top": "But we don’t know what is/at the top",
     "Please my love": "        Please my love",
-    "We can have a nice home and we love each other and that’s enough": "We can have a nice home/and we love each other and that’s enough",
-    "I’ve got to know. I must go and find out the secret of the top": "I’ve got to know./I must go and find out the secret of the top",
+    "We can have a nice home and we love each other and that's enough": "We can have a nice home/and we love each other and that’s enough",
+    "I've got to know I must go and find out the secret of the top": "I’ve got to know./I must go and find out the secret of the top",
     "Will you come and help me": "Will you come and help me",
     "No": "                 No",
-    "Don’t blame me if you don’t succeed. It’s a tough life": "Don’t blame me if you don’t succeed. It’s a tough life",
-    "There’s nothing here at all": "There’s nothing here at all",
-    "Be quiet. They can hear you down the pillar": "Be quiet./They can hear you down/the pillar",
-    "Look over there. There are so many other pillars": "Look over there./There are so many other/pillars",
-    "My pillar, only one of thousands": "My pillar,/Only one of thousands",
+    "Don't blame me if you don't succeed It's a tough life": "Don’t blame me if you don’t succeed. It’s a tough life",
+    "There's nothing here at all": "There’s nothing here at all",
+    "Be quiet They can hear you down the pillar": "Be quiet./They can hear you down/the pillar",
+    "Look over there There are so many other pillars": "Look over there./There are so many other/pillars",
+    "My pillar only one of thousands 1000": "My pillar,/Only one of thousands",
     "Millions of caterpillars climbing nowhere": "Millions of caterpillars/climbing nowhere",
-    "Maybe she was right. I wish I stayed with her": "Maybe she was right./I wish I stayed with her...",
-    "Yellow. Is that you": "Yellow./Is that you",
-    "I’ve been up. There’s nothing there": "I have been up./There is nothing there",
+    "Maybe she was right I wish I stayed with her": "Maybe she was right./I wish I stayed with her...",
+    "Yellow Is that you": "Yellow./Is that you",
+    "I've been up There's nothing there": "I have been up./There is nothing there",
     "I bet he never made it to the top": "I bet he never made it to the top",
-    "There’s nothing at the top and it doesn’t matter": "There is nothing at the/top and it doesn’t matter",
-    "Don’t say it even if it’s true. What else can we do": "Don’t say it even if it’s/true. What else can we do",
-    "Perhaps he’s right, I don’t have any proof": "Perhaps he is right/I don’t have any proof",
-    "I came down but what should I do now": "I came down but what/should I do now",
+    "There's nothing at the top and it doesn't matter": "There is nothing at the/top and it doesn’t matter",
+    "Don't say it even if it's true What else can we do": "Don’t say it even if it’s/true. What else can we do",
+    "Perhaps he's right I don't have any proof": "Perhaps he is right/I don’t have any proof",
+    "I came down but what else can I do now": "I came down but what/should I do now",
     "Am I dreaming": "Am I dreaming",
     "The creature keeps on inserting her head then her tail into that sack": "The creature keeps on/inserting her head then/her tail into that sack",
     "I understand what to do": "I understand what to do",
@@ -112,15 +112,19 @@ const getSpeech = () => {
 function getWordsArray(s) {
     let arr = [];
     arr = s.split(' ');
+    console.log(arr);
     return arr;
 }
 
 function isThisLineCorrect(speech, target) {
     let threshold = target.length / 2;
+    if (threshold > 5) threshold -= 3;
+
     let score = 0;
 
     for (let i = 0; i < speech.length; i++) {
         for (let j = 0; j < target.length; j++) {
+            // console.log(speech[i].toLowerCase() + " vs. " + target[j].toLowerCase());
             if (speech[i].toLowerCase() == target[j].toLowerCase()) {
                 score++;
                 j = target.length;
