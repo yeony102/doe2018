@@ -5,60 +5,62 @@ const speaker = [
     "s", "o", "o", "o", "s", "s", "s", "s", "s", "o", "s", "o", "s", "s", "s", "s", "s"
 ];
 
-const fullScript = [
-    "hope for the flowers",
-    "Hello world",
-    "Do you know what is happening",
-    "I just arrived myself",
-    "Nobody has time to explain. They’re so busy trying to go up there",
-    "But what’s at the top",
-    "No one knows but it must be awfully good because everybody’s rushing there. Goodbye.",
-    "There’s only one thing to do",
-    "Where are we going",
-    "You know, I was wondering that myself but there is no way to find out",
-    "How far are we from the top",
-    "Since we’re not at the bottom and not at the top we must be in the middle",
-    "Oh, Now when you look at me so kindly, I know for sure I don’t like this life",
-    "Same here",
-    "Let’s go down",
-    "Okay",
-    "Hi Stripe",
-    "Hi Yellow",
-    "Staying together like this is different from being crushed in that crowd",
-    "It really is",
-    "There must be still more to life",
-    "Just think how much better this is than that awful mess we have left",
-    "But we don’t know what’s at the top",
-    "Please my love",
-    "We can have a nice home and we love each other and that’s enough",
-    "I’ve got to know. I must go and find out the secret of the top",
-    "Will you come and help me",
-    "No",
-    "Don’t blame me if you don’t succeed. It’s a tough life",
-    "There’s nothing here at all",
-    "Be quiet. They can hear you down the pillar",
-    "Look over there. There are so many other pillars",
-    "My pillar, only one of thousands",
-    "Millions of caterpillars climbing nowhere",
-    "Maybe she was right. I wish I stayed with her...",
-    "Yellow. Is that you",
-    "I’ve been up. There’s nothing there",
-    "I bet he never made it to the top",
-    "There’s nothing at the top and it doesn’t matter",
-    "Don’t say it even if it’s true. What else can we do",
-    "Perhaps he’s right, I don’t have any proof",
-    "I came down but what should I do now",
-    "Am I dreaming",
-    "The creature keeps on inserting her head then her tail into that sack",
-    "I understand what to do",
-    "It is the end of the story",
-    "Or Another Beginning"
-];
+const script2stt = {
+    "hope for the flowers": "Hope for the Flowers",
+    "Hello world": "Hello world",
+    "Do you know what is happening": "Do you know what is/happening",
+    "I just arrived myself": "I just arrived myself",
+    "Nobody has time to explain. They're so busy trying to go up there": "Nobody has time to explain.They are so busy trying to go up there",
+    "But what’s at the top": "But what is at the top",
+    "No one knows but it must be awfully good because everybody’s rushing there. Goodbye.": "No one knows but it must/be awfully good because/everybody’s rushing there/Goodbye",
+    "There’s only one thing to do": "There is only one thing/to do",
+    "Where are we going": "Where are we going",
+    "You know, I was wondering that myself but there is no way to find out": "You know I was wondering/that myself but there is/no way to find out",
+    "How far are we from the top": "How far are we from the/top",
+    "Since we’re not at the bottom and not at the top we must be in the middle": "Since we are not at the/bottom and not at the/top we must be in the/middle",
+    "Oh, Now when you look at me so kindly, I know for sure I don’t like this life": "Oh, Now when you look at me so kindly, I know for sure I don’t like this life",
+    "Same here": "Same here",
+    "Let’s go down": "           Let’s go down",
+    "Okay": "Okay",
+    "Hi Stripe": "            Hi Stripe",
+    "Hi Yellow": "Hi Yellow",
+    "Staying together like this is different from being crushed in that crowd": "Staying together like this is different from being/crushed in that crowd",
+    "It really is": "         It really is",
+    "There must be still more to life": "There must be still more/to life",
+    "Just think how much better this is than that awful mess we have left": "Just think how much better this is than that awful/mess we have left",
+    "But we don’t know what’s at the top": "But we don’t know what is/at the top",
+    "Please my love": "        Please my love",
+    "We can have a nice home and we love each other and that’s enough": "We can have a nice home/and we love each other and that’s enough",
+    "I’ve got to know. I must go and find out the secret of the top": "I’ve got to know./I must go and find out the secret of the top",
+    "Will you come and help me": "Will you come and help me",
+    "No": "                 No",
+    "Don’t blame me if you don’t succeed. It’s a tough life": "Don’t blame me if you don’t succeed. It’s a tough life",
+    "There’s nothing here at all": "There’s nothing here at all",
+    "Be quiet. They can hear you down the pillar": "Be quiet./They can hear you down/the pillar",
+    "Look over there. There are so many other pillars": "Look over there./There are so many other/pillars",
+    "My pillar, only one of thousands": "My pillar,/Only one of thousands",
+    "Millions of caterpillars climbing nowhere": "Millions of caterpillars/climbing nowhere",
+    "Maybe she was right. I wish I stayed with her": "Maybe she was right./I wish I stayed with her...",
+    "Yellow. Is that you": "Yellow./Is that you",
+    "I’ve been up. There’s nothing there": "I have been up./There is nothing there",
+    "I bet he never made it to the top": "I bet he never made it to the top",
+    "There’s nothing at the top and it doesn’t matter": "There is nothing at the/top and it doesn’t matter",
+    "Don’t say it even if it’s true. What else can we do": "Don’t say it even if it’s/true. What else can we do",
+    "Perhaps he’s right, I don’t have any proof": "Perhaps he is right/I don’t have any proof",
+    "I came down but what should I do now": "I came down but what/should I do now",
+    "Am I dreaming": "Am I dreaming",
+    "The creature keeps on inserting her head then her tail into that sack": "The creature keeps on/inserting her head then/her tail into that sack",
+    "I understand what to do": "I understand what to do",
+    "It is the end of the story": "The End",
+    "Or Another Beginning": "Or Another Beginning"
+};
 
+const scripts = Object.keys(script2stt);
+const stts = Object.values(script2stt);
 
 let chars;
 
-let refinedSpeech;
+let line4print;
 
 let scenes = [];
 let scene = 0;
@@ -79,15 +81,12 @@ const getSpeech = () => {
 
     recognition.onresult = event => {
         const speechResult = event.results[0][0].transcript;
-        // console.log('result: ' + speechResult);
-        // console.log('confidence: ' + event.results[0][0].confidence);
-        // detectedSpeech = speechResult;
 
         console.log(speechResult);
         if (line < 47) {
-            if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(fullScript[line]))) {
-                refinedSpeech = fullScript[line];
-                console.log(refinedSpeech);
+            if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(scripts[line]))) {
+                line4print = stts[line];
+                // console.log(line4print);
                 line++;
                 charFrame = 0;
                 if (line == 1) changeScene(1);
@@ -135,7 +134,7 @@ function isThisLineCorrect(speech, target) {
 function changeScene(s) {
     let bgVertices = [2743, 2248, 2159, 3418, 1288, 2409, 2467];
 
-    refinedSpeech = '';
+    line4print = '';
 
     if (s < 8) {
         currentLayer = 0;
@@ -153,11 +152,12 @@ function changeScene(s) {
 document.addEventListener('keydown', keypressed, false);
 
 function keypressed(e) {
-    if (e.keyCode == 32) {
+    if (e.keyCode == 32) {  // SPACE
         getSpeech();
-    } else if (e.keyCode == 83) {
-        refinedSpeech = fullScript[line];
+    } else if (e.keyCode == 83) {   // 's'
+        line4print = stts[line];
         line++;
+        if (line == 1) changeScene(1);
     }
 }
 
@@ -194,13 +194,8 @@ let dialogSketch = function (p) {
 
             if (scene == 0) {
                 title = "Hope for the Flowers";
-            } else if (line == 46) {
-                title = "The End";
-                /* if (title = "It's the End") {
-                    title = "The End";
-                } */
-            } else if (line == 47) {
-                title = refinedSpeech;
+            } else {
+                title = line4print;
             }
 
             const charWidth = 60;
@@ -261,7 +256,7 @@ let dialogSketch = function (p) {
             p.translate(transX, transY);
             p.stroke(r, g, b, 128);
 
-            for (let ch of refinedSpeech) {
+            for (let ch of line4print) {
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
                     p.noFill();
@@ -273,9 +268,14 @@ let dialogSketch = function (p) {
                         }
                         p.endShape();
                     }
+                    xoff += charWidth;
                 }
-                xoff += charWidth;
-                if (xoff > lineBlockWidth) {
+
+                if (ch == ' ') {
+                    xoff += charWidth;
+                }
+
+                if (xoff > lineBlockWidth || ch == '/') {
                     xoff = 0;
                     yoff += charHeight;
                 }
@@ -283,7 +283,7 @@ let dialogSketch = function (p) {
 
             // live typing ...
             /* for (let i = 0; i < charFrame; i++) {
-                ch = refinedSpeech[i];
+                ch = line4print[i];
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
                     p.noFill();
@@ -303,10 +303,15 @@ let dialogSketch = function (p) {
                 }
             } 
 
-            if (charFrame < refinedSpeech.length) {
+            if (charFrame < line4print.length) {
                 charFrame++;
             }
             */
+            if (line == 45) {
+                setTimeout(() => {
+                    line4print = '';
+                }, 3000);
+            }
         }
 
     };
@@ -334,7 +339,7 @@ let drawingSketch = function (p) {
     let bgColor = 100;
     let mainColor = 225;
     let prevLineColor = 30;
-    let yellowColor = p.color(255, 255, 0);
+    let yellowColor = p.color(255, 255, 170);
 
     p.preload = function () {
         jsons.push(p.loadJSON("assets/scene1.json"));
