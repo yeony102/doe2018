@@ -72,6 +72,8 @@ let charFrame = 0;
 let drawFrames = [];
 let currentLayer;
 
+let isBtnReady = true;
+
 const getSpeech = () => {
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
@@ -156,12 +158,15 @@ function changeScene(s) {
 document.addEventListener('keydown', keypressed, false);
 
 function keypressed(e) {
-    if (e.keyCode == 32) {  // SPACE
-        getSpeech();
-    } else if (e.keyCode == 83) {   // 's'
-        line4print = stts[line];
-        line++;
-        if (line == 1) changeScene(1);
+    if (isBtnReady) {
+        if (e.keyCode == 32) {  // SPACE
+            getSpeech();
+        } else if (e.keyCode == 83 || e.keyCode == 39) {   // 's' or ArrowRight
+            line4print = stts[line];
+            line++;
+            charFrame = 0
+            if (line == 1) changeScene(1);
+        }
     }
 }
 
@@ -262,7 +267,34 @@ let dialogSketch = function (p) {
             p.translate(transX, transY);
             p.stroke(r, g, b, 128);
 
-            for (let ch of line4print) {
+            /*  for (let ch of line4print) {
+                 if (chars.hasOwnProperty(ch)) {
+                     let form = p.random(chars[ch]);
+                     p.noFill();
+                     for (let stroke of form) {
+                         p.beginShape();
+                         for (let coord of stroke) {
+                             p.vertex(xoff + (coord[0] * 0.1),
+                                 yoff + (coord[1] * 0.1));
+                         }
+                         p.endShape();
+                     }
+                     xoff += charWidth;
+                 }
+ 
+                 if (ch == ' ') {
+                     xoff += charWidth;
+                 }
+ 
+                 if (xoff > lineBlockWidth || ch == '/') {
+                     xoff = 0;
+                     yoff += charHeight;
+                 }
+             } */
+
+            // live typing ...
+            for (let i = 0; i < charFrame; i++) {
+                ch = line4print[i];
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
                     p.noFill();
@@ -287,32 +319,10 @@ let dialogSketch = function (p) {
                 }
             }
 
-            // live typing ...
-            /* for (let i = 0; i < charFrame; i++) {
-                ch = line4print[i];
-                if (chars.hasOwnProperty(ch)) {
-                    let form = p.random(chars[ch]);
-                    p.noFill();
-                    for (let stroke of form) {
-                        p.beginShape();
-                        for (let coord of stroke) {
-                            p.vertex(xoff + (coord[0] * 0.1),
-                                yoff + (coord[1] * 0.1));
-                        }
-                        p.endShape();
-                    }
-                }
-                xoff += charWidth;
-                if (xoff > lineBlockWidth) {
-                    xoff = 0;
-                    yoff += charHeight;
-                }
-            } 
-
             if (charFrame < line4print.length) {
                 charFrame++;
             }
-            */
+
             if (line == 45) {
                 setTimeout(() => {
                     line4print = '';
@@ -529,6 +539,7 @@ let drawingSketch = function (p) {
 
 
         if (drawFrames[currentLayer] < s1[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -543,12 +554,19 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s1.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(2);
+                    isBtnReady = true;
                 }, waitLong);
             }
+
+            // otherwise, 
             else {
+
+                isBtnReady = true;
+
                 switch (line) {
                     // hello world
                     case 2:
@@ -725,6 +743,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s2[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 1 || currentLayer == 4 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
@@ -739,12 +758,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s2.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(3);
+                    isBtnReady = true;
                 }, waitShort);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // Where are we going
                     case 9:
@@ -861,6 +883,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s3[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 2) {
                 drawFrames[currentLayer] += 4;
             }
@@ -875,12 +898,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s3.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(4);
+                    isBtnReady = true;
                 }, waitShort);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // Hi Stripe
                     case 17:
@@ -1012,6 +1038,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s4[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 1 || currentLayer == 3) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1026,12 +1053,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s4.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(5);
+                    isBtnReady = true;
                 }, waitShort);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // There must be still more to life
                     case 21:
@@ -1208,6 +1238,7 @@ let drawingSketch = function (p) {
         // p.pop();
 
         if (drawFrames[currentLayer] < s5[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 1 || currentLayer == 4 || currentLayer == 5 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1222,12 +1253,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s5.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(6);
+                    isBtnReady = true;
                 }, waitLong);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // Don’t blame me if you don’t succeed! It’s a tough life
                     case 29:
@@ -1348,6 +1382,7 @@ let drawingSketch = function (p) {
         p.endShape();
 
         if (drawFrames[currentLayer] < s6[currentLayer].length) {
+            isBtnReady = false;
             if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1362,12 +1397,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s6.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(7);
+                    isBtnReady = true;
                 }, waitLong);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // I’ve been up; there’s nothing there
                     case 37:
@@ -1462,6 +1500,7 @@ let drawingSketch = function (p) {
         p.endShape();
 
         if (drawFrames[currentLayer] < s7[currentLayer].length) {
+            isBtnReady = false;
             /* if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1476,12 +1515,15 @@ let drawingSketch = function (p) {
 
             // if this is the last layer, change the scene
             if (currentLayer == (s7.length - 1)) {
+                isBtnReady = false;
                 setTimeout(() => {
                     p.clear();
                     changeScene(8);
+                    isBtnReady = true;
                 }, waitLong);
             }
             else {
+                isBtnReady = true;
                 switch (line) {
                     // I came down, but what else can I do now
                     case 42:
