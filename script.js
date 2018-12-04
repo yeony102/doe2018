@@ -10,7 +10,7 @@ const script2stt = {
     "Hello world": "Hello world",
     "Do you know what is happening": "Do you know what is/happening",
     "I just arrived myself": "I just arrived myself",
-    "Nobody has time to explain They're so busy trying to go up there": "Nobody has time to explain.They are so busy trying to go up there",
+    "Nobody has time to explain They're so busy trying to go up there": "Nobody has time to explain/They are so busy trying to/go up there",
     "But what's at the top": "But what is at the top",
     "No one knows but it must be awfully good because everybody's rushing there Goodbye": "No one knows but it must/be awfully good because/everybody’s rushing there/Goodbye",
     "There's only one thing to do": "There is only one thing/to do",
@@ -18,23 +18,23 @@ const script2stt = {
     "You know I was wondering that myself but there is no way to find out": "You know I was wondering/that myself but there is/no way to find out",
     "How far are we from the top": "How far are we from the/top",
     "Since we’re not at the bottom and not at the top we must be in the middle": "Since we are not at the/bottom and not at the/top we must be in the/middle",
-    "Oh Now when you look at me so kindly I know for sure I don't like this life": "Oh, Now when you look at me so kindly, I know for sure I don’t like this life",
+    "Oh Now when you look at me so kindly I know for sure I don't like this life": "Oh, Now when you look at me/so kindly I know for sure/I don’t like this life",
     "Same here": "Same here",
     "Let's go down": "           Let’s go down",
     "Okay": "Okay",
     "Hi Stripe": "            Hi Stripe",
     "Hi Yellow": "Hi Yellow",
-    "Staying together like this is different from being crushed in that crowd": "Staying together like this is different from being/crushed in that crowd",
+    "Staying together like this is different from being crushed in that crowd": "Staying together like/this is different from/being crushed in that crowd",
     "It really is": "         It really is",
     "There must be still more to life": "There must be still more/to life",
-    "Just think how much better this is than that awful mess we have left": "Just think how much better this is than that awful/mess we have left",
+    "Just think how much better this is than that awful mess we have left": "Just think how much better/this is than that awful/mess we have left",
     "But we don't know what's at the top": "But we don’t know what is/at the top",
     "Please my love": "        Please my love",
-    "We can have a nice home and we love each other and that's enough": "We can have a nice home/and we love each other and that’s enough",
-    "I've got to know I must go and find out the secret of the top": "I’ve got to know./I must go and find out the secret of the top",
+    "We can have a nice home and we love each other and that's enough": "We can have a nice home/and we love each other and/that’s enough",
+    "I've got to know I must go and find out the secret of the top": "I’ve got to know./I must go and find out/the secret of the top",
     "Will you come and help me": "Will you come and help me",
     "No": "                 No",
-    "Don't blame me if you don't succeed It's a tough life": "Don’t blame me if you don’t succeed. It’s a tough life",
+    "Don't blame me if you don't succeed It's a tough life": "Don’t blame me if you/don’t succeed/It’s a tough life",
     "There's nothing here at all": "There’s nothing here at all",
     "Be quiet They can hear you down the pillar": "Be quiet./They can hear you down/the pillar",
     "Look over there There are so many other pillars": "Look over there./There are so many other/pillars",
@@ -43,7 +43,7 @@ const script2stt = {
     "Maybe she was right I wish I stayed with her": "Maybe she was right./I wish I stayed with her...",
     "Yellow Is that you": "Yellow./Is that you",
     "I've been up There's nothing there": "I have been up./There is nothing there",
-    "I bet he never made it to the top": "I bet he never made it to the top",
+    "I bet he never made it to the top": "I bet he never made it/to the top",
     "There's nothing at the top and it doesn't matter": "There is nothing at the/top and it doesn’t matter",
     "Don't say it even if it's true What else can we do": "Don’t say it even if it’s/true. What else can we do",
     "Perhaps he's right I don't have any proof": "Perhaps he is right/I don’t have any proof",
@@ -53,7 +53,7 @@ const script2stt = {
     "I understand what to do": "I understand what to do",
     "It is the end of the story": "The End",
     "Or Another Beginning": "Or Another Beginning",
-    "Credit": "ORIGINAL       Hope For The Flowers/               Trina Paulus//ILLUSTRATION   Alice Sun//JAVASCRIPT     Yeonhee Lee//MUSIC          Inside River 2/               Akira Kosemura"
+    "Credit": "STORY          Hope For The Flowers/               Trina Paulus//ILLUSTRATION   Alice Sun//JAVASCRIPT     Yeonhee Lee//MUSIC          Inside River 2/               Akira Kosemura"
 };
 
 const scripts = Object.keys(script2stt);
@@ -65,7 +65,7 @@ let line4print;
 
 let scenes = [];
 let scene = 0;
-let line = 48;
+let line = 0;
 
 let targetSpeech = [];
 
@@ -73,7 +73,8 @@ let charFrame = 0;
 let drawFrames = [];
 let currentLayer;
 
-let isBtnReady = true;
+let isDrawingReady = true;
+let isTxtReady = true;
 
 const getSpeech = () => {
     const recognition = new SpeechRecognition();
@@ -127,7 +128,6 @@ function isThisLineCorrect(speech, target) {
 
     for (let i = 0; i < speech.length; i++) {
         for (let j = 0; j < target.length; j++) {
-            // console.log(speech[i].toLowerCase() + " vs. " + target[j].toLowerCase());
             if (speech[i].toLowerCase() == target[j].toLowerCase()) {
                 score++;
                 j = target.length;
@@ -152,6 +152,10 @@ function changeScene(s) {
         }
     }
 
+    if (s > 1 && s < 8) {
+        line--;
+    }
+
     scene = s;
 
 }
@@ -159,7 +163,7 @@ function changeScene(s) {
 document.addEventListener('keydown', keypressed, false);
 
 function keypressed(e) {
-    if (isBtnReady) {
+    if (isDrawingReady && isTxtReady) {
         if (e.keyCode == 32) {  // SPACE
             getSpeech();
         } else if (e.keyCode == 83 || e.keyCode == 39) {   // 's' or ArrowRight
@@ -208,17 +212,11 @@ let dialogSketch = function (p) {
                 title = stts[line - 1];
             }
 
-            /* else if (line == 46) {
-                title = stts[45];
-            } else {
-                title = line4print;
-            } */
-
             const charWidth = 60;
             const charHeight = 60;
 
             p.strokeWeight(7);
-            p.translate(p.windowWidth / 2 - ((title.length * charWidth) / 2), p.windowHeight / 2 - (charHeight / 2));
+            p.translate(p.windowWidth / 2 - (((title.length - 1) * charWidth) / 2), p.windowHeight / 2 - (charHeight / 2));
 
             for (let ch of title) {
                 if (chars.hasOwnProperty(ch)) {
@@ -242,7 +240,6 @@ let dialogSketch = function (p) {
             const margin = 100;
 
             let transX, transY;
-            // let c;
             let lineBlockWidth = 500;
 
             switch (speaker[line - 1]) {
@@ -272,6 +269,7 @@ let dialogSketch = function (p) {
             p.translate(transX, transY);
             p.stroke(r, g, b, 128);
 
+            // No typing effect
             /*  for (let ch of line4print) {
                  if (chars.hasOwnProperty(ch)) {
                      let form = p.random(chars[ch]);
@@ -297,7 +295,7 @@ let dialogSketch = function (p) {
                  }
              } */
 
-            // live typing ...
+            // Typing effect
             for (let i = 0; i < charFrame; i++) {
                 ch = line4print[i];
                 if (chars.hasOwnProperty(ch)) {
@@ -318,27 +316,21 @@ let dialogSketch = function (p) {
                     xoff += charWidth;
                 }
 
-                if (xoff > lineBlockWidth || ch == '/') {
+                if (ch == '/') {
                     xoff = 0;
                     yoff += charHeight;
                 }
             }
 
             if (charFrame < line4print.length) {
-                isBtnReady = false;
+                isTxtReady = false;
                 charFrame++;
             }
 
             if (charFrame >= line4print.length) {
-                isBtnReady = true;
+                isTxtReady = true;
             }
-
-            if (line == 45) {
-                setTimeout(() => {
-                    line4print = '';
-                }, 3000);
-            }
-        } else if (line >= 48) {    // credit (line >= 48)
+        } else if (line == 48) {    // The ending credit 
             p.strokeWeight(2);
             p.stroke(220, 128);
             const charWidth = 35;
@@ -390,9 +382,6 @@ let drawingSketch = function (p) {
 
     let jsons = [];
 
-    let waitShort = 1000;
-    let waitLong = 1000;
-
     let bgStrokeWeight = 1;
     let mainStrokeWeight = 1;
 
@@ -414,10 +403,8 @@ let drawingSketch = function (p) {
 
     p.setup = function () {
         p.createCanvas(p.windowWidth, p.windowHeight);
-        // p.stroke(mainColor);
         p.strokeCap(p.ROUND);
         p.strokeJoin(p.ROUND);
-        // p.strokeWeight(1);
         p.noFill();
 
         // converts json data to a 3d array
@@ -425,11 +412,9 @@ let drawingSketch = function (p) {
         // 2nd: layers
         // 3rd: vertices 
         for (scnIdx in jsons) {
-            // console.log(jsons[1]);
             let scn = jsons[scnIdx];
             let layers = [];
             for (layerIdx in scn) {
-                // console.log(scn[layerIdx]);
                 let lyr = scn[layerIdx];
                 let vtx = [];
                 for (pntIdx in lyr) {
@@ -454,7 +439,6 @@ let drawingSketch = function (p) {
     };
 
     p.draw = function () {
-        // p.background(255);
         switch (scene) {
             case 1:
                 drawScene1();
@@ -484,11 +468,6 @@ let drawingSketch = function (p) {
 
     function drawScene1() {
         const s1 = scenes[0];
-        // console.log(s1);
-
-        // p.push();
-        // p.translate(-100, 0);
-
 
         // layer 0 (background)
         p.stroke(bgColor);
@@ -579,11 +558,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // p.pop();
-
-
         if (drawFrames[currentLayer] < s1[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -596,68 +572,59 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s1[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s1.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+
+            switch (line) {
+                // hello world
+                case 2:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // do you know what is happening
+                case 3:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // I just arrived myself
+                case 4:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Nobody has time to explain. they're so busy trying to go up there
+                case 5:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // But what's up there
+                case 6:
+                    currentLayer = 5;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // No one knows but it must be awfully good because everybody’s rushing there. Goodbye
+                case 7:
+                    currentLayer = 6;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // There’s only one thing to do
+                case 8:
+                    // p.clear();
+                    currentLayer = 7;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 9:
                     p.clear();
                     changeScene(2);
-                    isBtnReady = true;
-                }, waitLong);
-            }
+                    break;
 
-            // otherwise, 
-            else {
-
-                isBtnReady = true;
-
-                switch (line) {
-                    // hello world
-                    case 2:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // do you know what is happening
-                    case 3:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // I just arrived myself
-                    case 4:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Nobody has time to explain. they're so busy trying to go up there
-                    case 5:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // But what's up there
-                    case 6:
-                        currentLayer = 5;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // No one knows but it must be awfully good because everybody’s rushing there. Goodbye
-                    case 7:
-                        currentLayer = 6;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // There’s only one thing to do
-                    case 8:
-                        // p.clear();
-                        currentLayer = 7;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
 
@@ -683,7 +650,7 @@ let drawingSketch = function (p) {
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
         }
-        // stripe "Where are we going"
+        // stripe: "Where are we going"
         const layer1 = s2[1];
         p.beginShape();
         for (let i = 0; i < drawFrames[1]; i++) {
@@ -692,7 +659,7 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // yellow "You know, I was wondering that myself but there is no way to find out"
+        // yellow: "You know, I was wondering that myself but there is no way to find out"
         if (currentLayer > 6) {
             p.stroke(prevLineColor);
         } else {
@@ -745,7 +712,6 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-
         // "Same here"
         if (currentLayer > 7) {
             p.stroke(prevLineColor);
@@ -760,7 +726,6 @@ let drawingSketch = function (p) {
             p.vertex(vtx.x, vtx.y);
         }
         p.endShape();
-
 
         // "Let’s go down"
         p.stroke(yellowColor);
@@ -784,10 +749,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // p.pop();
-
         if (drawFrames[currentLayer] < s2[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 1 || currentLayer == 4 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
@@ -800,71 +763,65 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s2[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s2.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+            switch (line) {
+                // Where are we going
+                case 9:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // You know, I was wondering that myself but there is no way to find out
+                case 10:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // How far are we from the top
+                case 11:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Since we’re not at the bottom and not at the top we must be in the middle
+                case 12:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Oh, now when you look at me so kindly, I know for sure I don’t like this life
+                case 13:
+                    currentLayer = 5;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Same here
+                case 14:
+                    currentLayer = 6;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Let’s go down
+                case 15:
+                    // p.clear();
+                    currentLayer = 7;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Okay
+                case 16:
+                    // p.clear();
+                    currentLayer = 8;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 17:
                     p.clear();
                     changeScene(3);
-                    isBtnReady = true;
-                }, waitShort);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // Where are we going
-                    case 9:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // You know, I was wondering that myself but there is no way to find out
-                    case 10:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // How far are we from the top
-                    case 11:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Since we’re not at the bottom and not at the top we must be in the middle
-                    case 12:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Oh, now when you look at me so kindly, I know for sure I don’t like this life
-                    case 13:
-                        currentLayer = 5;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Same here
-                    case 14:
-                        currentLayer = 6;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Let’s go down
-                    case 15:
-                        // p.clear();
-                        currentLayer = 7;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Okay
-                    case 16:
-                        // p.clear();
-                        currentLayer = 8;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
     }
@@ -924,10 +881,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // p.pop();
-
         if (drawFrames[currentLayer] < s3[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 2) {
                 drawFrames[currentLayer] += 4;
             }
@@ -940,45 +895,39 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s3[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s3.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+            switch (line) {
+                // Hi Stripe
+                case 17:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Hi Yellow
+                case 18:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Staying together like this is different from being crushed in that crowd
+                case 19:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // It really is
+                case 20:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 21:
                     p.clear();
                     changeScene(4);
-                    isBtnReady = true;
-                }, waitShort);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // Hi Stripe
-                    case 17:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // Hi Yellow
-                    case 18:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Staying together like this is different from being crushed in that crowd
-                    case 19:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // It really is
-                    case 20:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
     }
@@ -1079,10 +1028,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // p.pop();
-
         if (drawFrames[currentLayer] < s4[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 1 || currentLayer == 3) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1095,70 +1042,63 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s4[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s4.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+            switch (line) {
+                // There must be still more to life
+                case 21:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Just think how much better this is than that awful mess we have left
+                case 22:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // But we don’t know what’s at the top
+                case 23:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Please, my love
+                case 24:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // We can have a nice home and we love each other and that’s enough
+                case 25:
+                    currentLayer = 5;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // I’ve got to know. I must go and find out the secret of the top.
+                case 26:
+                    currentLayer = 6;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Will you come and help me
+                case 27:
+                    currentLayer = 7;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // No
+                case 28:
+                    currentLayer = 8;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 29:
                     p.clear();
                     changeScene(5);
-                    isBtnReady = true;
-                }, waitShort);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // There must be still more to life
-                    case 21:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // Just think how much better this is than that awful mess we have left
-                    case 22:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // But we don’t know what’s at the top
-                    case 23:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Please, my love
-                    case 24:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // We can have a nice home and we love each other and that’s enough
-                    case 25:
-                        currentLayer = 5;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // I’ve got to know. I must go and find out the secret of the top.
-                    case 26:
-                        currentLayer = 6;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Will you come and help me
-                    case 27:
-                        currentLayer = 7;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // No
-                    case 28:
-                        // p.clear();
-                        currentLayer = 8;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
 
@@ -1279,10 +1219,8 @@ let drawingSketch = function (p) {
         }
         p.endShape();
 
-        // p.pop();
-
         if (drawFrames[currentLayer] < s5[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 1 || currentLayer == 4 || currentLayer == 5 || currentLayer == 8) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1295,70 +1233,63 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s5[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s5.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+            switch (line) {
+                // Don’t blame me if you don’t succeed! It’s a tough life
+                case 29:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // There’s nothing here at all
+                case 30:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Be quiet! They can hear you down the pillar.
+                case 31:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Look over there! There are so many other pillars
+                case 32:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // My pillar, only one of thousands
+                case 33:
+                    currentLayer = 5;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Millions of caterpillars climbing nowhere
+                case 34:
+                    currentLayer = 6;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Maybe she was right. I wish I stayed with her…
+                case 35:
+                    currentLayer = 7;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Yellow. Is that you
+                case 36:
+                    currentLayer = 8;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 37:
                     p.clear();
                     changeScene(6);
-                    isBtnReady = true;
-                }, waitLong);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // Don’t blame me if you don’t succeed! It’s a tough life
-                    case 29:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // There’s nothing here at all
-                    case 30:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Be quiet! They can hear you down the pillar.
-                    case 31:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Look over there! There are so many other pillars
-                    case 32:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // My pillar, only one of thousands
-                    case 33:
-                        currentLayer = 5;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Millions of caterpillars climbing nowhere
-                    case 34:
-                        currentLayer = 6;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Maybe she was right. I wish I stayed with her…
-                    case 35:
-                        currentLayer = 7;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Yellow. Is that you
-                    case 36:
-                        // p.clear();
-                        currentLayer = 8;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
     }
@@ -1426,7 +1357,7 @@ let drawingSketch = function (p) {
         p.endShape();
 
         if (drawFrames[currentLayer] < s6[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1439,51 +1370,45 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s6[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s6.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+            switch (line) {
+                // I’ve been up; there’s nothing there
+                case 37:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // I bet he never made it to the top
+                case 38:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // There’s nothing at the top and it doesn’t matter
+                case 39:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Don’t say it even if it’s true. What else can we do
+                case 40:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Perhaps he’s right, I don’t have any proof
+                case 41:
+                    currentLayer = 5;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 42:
                     p.clear();
                     changeScene(7);
-                    isBtnReady = true;
-                }, waitLong);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // I’ve been up; there’s nothing there
-                    case 37:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // I bet he never made it to the top
-                    case 38:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // There’s nothing at the top and it doesn’t matter
-                    case 39:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Don’t say it even if it’s true. What else can we do
-                    case 40:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // Perhaps he’s right, I don’t have any proof
-                    case 41:
-                        currentLayer = 5;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
     }
@@ -1544,7 +1469,7 @@ let drawingSketch = function (p) {
         p.endShape();
 
         if (drawFrames[currentLayer] < s7[currentLayer].length) {
-            isBtnReady = false;
+            isDrawingReady = false;
             /* if (currentLayer == 1) {
                 drawFrames[currentLayer] += 4;
             }
@@ -1557,45 +1482,40 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] == s7[currentLayer].length) {
 
-            // if this is the last layer, change the scene
-            if (currentLayer == (s7.length - 1)) {
-                isBtnReady = false;
-                setTimeout(() => {
+            isDrawingReady = true;
+
+            switch (line) {
+                // I came down, but what else can I do now
+                case 42:
+                    currentLayer = 1;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // Am I dreaming
+                case 43:
+                    currentLayer = 2;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // The creature keeps on inserting her head, then her tail, into that sack
+                case 44:
+                    currentLayer = 3;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                // I understand what to do
+                case 45:
+                    currentLayer = 4;
+                    console.log("Start drawing layer #" + currentLayer);
+                    break;
+
+                case 46:
                     p.clear();
                     changeScene(8);
-                    isBtnReady = true;
-                }, waitLong);
-            }
-            else {
-                isBtnReady = true;
-                switch (line) {
-                    // I came down, but what else can I do now
-                    case 42:
-                        currentLayer = 1;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
+                    break;
 
-                    // Am I dreaming
-                    case 43:
-                        currentLayer = 2;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // The creature keeps on inserting her head, then her tail, into that sack
-                    case 44:
-                        currentLayer = 3;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    // I understand what to do
-                    case 45:
-                        currentLayer = 4;
-                        console.log("Start drawing layer #" + currentLayer);
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
     }
