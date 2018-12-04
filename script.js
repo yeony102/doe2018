@@ -52,7 +52,8 @@ const script2stt = {
     "The creature keeps on inserting her head then her tail into that sack": "The creature keeps on/inserting her head then/her tail into that sack",
     "I understand what to do": "I understand what to do",
     "It is the end of the story": "The End",
-    "Or Another Beginning": "Or Another Beginning"
+    "Or Another Beginning": "Or Another Beginning",
+    "Credit": "ORIGINAL       Hope For The Flowers/               Trina Paulus//ILLUSTRATION   Alice Sun//JAVASCRIPT     Yeonhee Lee//MUSIC          Inside River 2/               Akira Kosemura"
 };
 
 const scripts = Object.keys(script2stt);
@@ -64,7 +65,7 @@ let line4print;
 
 let scenes = [];
 let scene = 0;
-let line = 0;
+let line = 48;
 
 let targetSpeech = [];
 
@@ -85,7 +86,7 @@ const getSpeech = () => {
         const speechResult = event.results[0][0].transcript;
 
         console.log(speechResult);
-        if (line < 47) {
+        if (line < 48) {
             if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(scripts[line]))) {
                 line4print = stts[line];
                 // console.log(line4print);
@@ -196,18 +197,22 @@ let dialogSketch = function (p) {
         let xoff = 0;
         let yoff = 0;
 
-        if (line == 0 || line > 45) {
+        if (line == 0 || (line > 45 && line < 48)) {
             p.stroke(190, 128);
 
             let title;
 
             if (scene == 0) {
                 title = "Hope for the Flowers";
-            } else if (line == 46) {
+            } else {
+                title = stts[line - 1];
+            }
+
+            /* else if (line == 46) {
                 title = stts[45];
             } else {
                 title = line4print;
-            }
+            } */
 
             const charWidth = 60;
             const charHeight = 60;
@@ -230,14 +235,14 @@ let dialogSketch = function (p) {
                 }
                 xoff += charWidth;
             }
-        } else if (line > 1 && line < 46) {   // don't show the title in the dialog box
+        } else if (line > 1 && line < 46) {
             p.strokeWeight(2);
             const charWidth = 20;
             const charHeight = 50;
             const margin = 100;
 
             let transX, transY;
-            let c;
+            // let c;
             let lineBlockWidth = 500;
 
             switch (speaker[line - 1]) {
@@ -320,7 +325,12 @@ let dialogSketch = function (p) {
             }
 
             if (charFrame < line4print.length) {
+                isBtnReady = false;
                 charFrame++;
+            }
+
+            if (charFrame >= line4print.length) {
+                isBtnReady = true;
             }
 
             if (line == 45) {
@@ -328,6 +338,40 @@ let dialogSketch = function (p) {
                     line4print = '';
                 }, 3000);
             }
+        } else if (line >= 48) {    // credit (line >= 48)
+            p.strokeWeight(2);
+            p.stroke(220, 128);
+            const charWidth = 35;
+            const charHeight = 80;
+
+            let endingCredit = stts[47];
+
+            p.translate(p.windowWidth / 2 - ((34 * charWidth) / 2), p.windowHeight / 2 - (8 * charHeight / 2));
+
+            for (let ch of endingCredit) {
+                if (chars.hasOwnProperty(ch)) {
+                    let form = p.random(chars[ch]);
+                    p.noFill();
+                    for (let stroke of form) {
+                        p.beginShape();
+                        for (let coord of stroke) {
+                            p.vertex(xoff + (coord[0] * 0.15),
+                                yoff + (coord[1] * 0.15));
+                        }
+                        p.endShape();
+                    }
+                    xoff += charWidth;
+                }
+                if (ch == ' ') {
+                    xoff += charWidth;
+                }
+
+                if (ch == '/') {
+                    xoff = 0;
+                    yoff += charHeight;
+                }
+            }
+
         }
 
     };
