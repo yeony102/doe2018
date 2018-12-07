@@ -77,8 +77,6 @@ let currentLayer;
 let isDrawingReady = true;
 let isTxtReady = true;
 
-let voice;
-let vol;
 let bgm;
 let playStart = false;
 
@@ -169,7 +167,7 @@ function changeScene(s) {
 document.addEventListener('keydown', keypressed, false);
 
 function keypressed(e) {
-    if (isDrawingReady && isTxtReady) {
+    if (isDrawingReady) {
         if (e.keyCode == 32) {  // SPACE
             playStart = true;
             getSpeech();
@@ -189,6 +187,18 @@ function keypressed(e) {
  ***************************************************************/
 
 let dialogSketch = function (p) {
+
+    let voice;
+    let vol;
+
+    // const startX = 100;
+    // const endX = 450;
+    const baseY = 100;
+
+    let sinFrame;
+    let cosFrame;
+
+
     p.preload = function () {
         chars = p.loadJSON("assets/char74k-normalized.json");
         // p.soundFormat('mp3', 'ogg');
@@ -199,18 +209,26 @@ let dialogSketch = function (p) {
         p.createCanvas(p.windowWidth, p.windowHeight);
         console.log(p.windowWidth + " " + p.windowHeight);
 
+        voice = new p5.AudioIn();
+        voice.start();
+
+        sinFrame = 0;
+        cosFrame = 0;
+
         p.frameRate(15);
     };
 
     p.draw = function () {
 
+        ///// TRY TO MOVE IT INTO THE keypressed FUNCTION
         if (playStart && !bgm.isPlaying()) {
             bgm.setVolume(1);
             bgm.play();
         }
 
-        p.background(0, 64);
+        vol = voice.getLevel();
 
+        p.background(0, 64);
 
         let xoff = 0;
         let yoff = 0;
@@ -251,8 +269,48 @@ let dialogSketch = function (p) {
             }
         }
 
+        // Waves
+        else if (scene > 0 && scene < 8 && isDrawingReady && isTxtReady) {
+
+            let r, g, b;
+            let startX, endX;
+
+            switch (speaker[line]) {
+                case 's':
+                    startX = 100;
+                    endX = 300;
+                    r = 220;
+                    g = 220;
+                    b = 220;
+                    break;
+                case 'y':
+                    startX = p.windowWidth - 350;
+                    endX = p.windowWidth - 150;
+                    r = 220;
+                    g = 220;
+                    b = 0;
+                    break;
+                default:
+                    startX = p.windowWidth - 350;
+                    endX = p.windowWidth - 150;
+                    r = 220;
+                    g = 220;
+                    b = 220;
+                    break;
+            }
+
+            showWaves(r, g, b, startX, endX);
+
+            sinFrame += 5;
+            cosFrame += 10;
+
+        }
+
         // Scene 1 – 7
         else if (line > 1 && line < 46) {
+
+            isTxtReady = false;
+
             p.strokeWeight(2);
             const charWidth = 20;
             const charHeight = 50;
@@ -260,6 +318,8 @@ let dialogSketch = function (p) {
 
             let transX, transY;
             let lineBlockWidth = 500;
+
+            let r, g, b;
 
             switch (speaker[line - 1]) {
                 case 's':
@@ -289,6 +349,7 @@ let dialogSketch = function (p) {
             p.stroke(r, g, b, 128);
 
             // No typing effect
+
             for (let ch of line4print) {
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
@@ -350,6 +411,16 @@ let dialogSketch = function (p) {
                 isTxtReady = true;
             }*/
 
+            if (isDrawingReady) {
+                // console.log(vol * 1000);
+                if ((vol * 1000) > 50) {
+                    isTxtReady = true;
+                } else {
+                    isTxtReady = false;
+                }
+            }
+
+
         } else if (line > 48) {    // The ending credit 
             p.strokeWeight(2);
             p.stroke(220, 128);
@@ -385,8 +456,39 @@ let dialogSketch = function (p) {
             }
 
         }
-
     };
+
+    function showWaves(r, g, b, startX, endX) {
+
+
+        p.stroke(r, g, b, 100);
+        p.strokeWeight(1);
+        p.strokeCap(p.ROUND);
+        p.strokeJoin(p.ROUND);
+
+        let v = vol * 500;
+
+        /* if (v > 20) {
+            v = vol * 500;
+        } else {
+            v = vol * 500;
+        } */
+
+        p.beginShape();
+        for (let x = startX; x <= endX; x++) {
+            let y = p.sin((x + sinFrame) * 0.05) * v;
+            p.vertex(x, y + baseY);
+        }
+        p.endShape();
+
+        p.beginShape();
+        for (let x = startX; x <= endX; x++) {
+
+            let y = p.cos((x + cosFrame) * 0.05) * v;
+            p.vertex(x, y + baseY);
+        }
+        p.endShape();
+    }
 }
 
 let dialogP5 = new p5(dialogSketch, 'dialog-canvas');
@@ -406,10 +508,6 @@ let drawingSketch = function (p) {
     let mainStrokeWeight = 1;
 
     let bgColor = 100;
-    /*    let bgRed = 100;
-       let bgGreen = 100;
-       let bgBlue = 100; */
-
     let mainColor = 225;
     let prevLineColor = 30;
     let yellowColor = p.color(255, 255, 170);
@@ -430,9 +528,6 @@ let drawingSketch = function (p) {
         p.strokeCap(p.ROUND);
         p.strokeJoin(p.ROUND);
         p.noFill();
-
-        voice = new p5.AudioIn();
-        voice.start();
 
         // converts json data to a 3d array
         // 1st: scenes
@@ -467,9 +562,6 @@ let drawingSketch = function (p) {
 
     p.draw = function () {
 
-        vol = voice.getLevel() * 100;
-        // console.log(vol);
-
         switch (scene) {
             case 1:
                 drawScene1();
@@ -499,23 +591,6 @@ let drawingSketch = function (p) {
 
     function drawScene1() {
         const s1 = scenes[0];
-
-        // console.log(vol);
-
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
 
         // layer 0 (background)
         p.stroke(bgColor);
@@ -680,21 +755,6 @@ let drawingSketch = function (p) {
 
     function drawScene2() {
         const s2 = scenes[1];
-
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
 
         // background
         p.strokeWeight(bgStrokeWeight);
@@ -892,21 +952,6 @@ let drawingSketch = function (p) {
     function drawScene3() {
         const s3 = scenes[2];
 
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
-
         // layer0: background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -1012,21 +1057,6 @@ let drawingSketch = function (p) {
 
     function drawScene4() {
         const s4 = scenes[3];
-
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
 
         // layer0: Background
         p.strokeWeight(bgStrokeWeight);
@@ -1199,21 +1229,6 @@ let drawingSketch = function (p) {
 
     function drawScene5() {
         const s5 = scenes[4];
-
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
 
         // background
         p.strokeWeight(bgStrokeWeight);
@@ -1405,21 +1420,6 @@ let drawingSketch = function (p) {
     function drawScene6() {
         const s6 = scenes[5];
 
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
-
         // background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -1539,21 +1539,6 @@ let drawingSketch = function (p) {
     function drawScene7() {
         const s7 = scenes[6];
 
-        if (vol > 5) {
-            bgColor = p.map(vol, 5, 15, 20, 255);
-        }
-
-        if (isDrawingReady && bgColor != 100) {
-            if (bgColor < 100) {
-                bgColor += 10;
-                if (bgColor > 100) bgColor = 100;
-            }
-            else if (bgColor > 100) {
-                bgColor -= 10;
-                if (bgColor < 100) bgColor = 100;
-            }
-        }
-
         // background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -1608,10 +1593,7 @@ let drawingSketch = function (p) {
 
         if (drawFrames[currentLayer] < s7[currentLayer].length) {
             isDrawingReady = false;
-            /* if (currentLayer == 1) {
-                drawFrames[currentLayer] += 4;
-            }
-            else */ drawFrames[currentLayer] += 2;
+            drawFrames[currentLayer] += 2;
 
             if (drawFrames[currentLayer] > s7[currentLayer].length) {
                 drawFrames[currentLayer] = s7[currentLayer].length;
