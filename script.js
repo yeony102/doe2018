@@ -51,9 +51,10 @@ const script2stt = {
     "Am I dreaming": "Am I dreaming",
     "The creature keeps on inserting her head then her tail into that sack": "The creature keeps on/inserting her head then/her tail into that sack",
     "I understand what to do": "I understand what to do",
-    "It is the end of the story": "The End",
+    "next": "",
+    "This is the end of the story": "The End",
     "Or Another Beginning": "Or Another Beginning",
-    "Credit": "STORY          Hope For The Flowers/               Trina Paulus//ILLUSTRATION   Alice Sun//JAVASCRIPT     Yeonhee Lee//MUSIC          Inside River 2/               Akira Kosemura"
+    "Thank you": "STORY          Hope For The Flowers/               Trina Paulus//ILLUSTRATION   Alice Sun//JAVASCRIPT     Yeonhee Lee//MUSIC          Inside River/               Akira Kosemura"
 };
 
 const scripts = Object.keys(script2stt);
@@ -76,6 +77,11 @@ let currentLayer;
 let isDrawingReady = true;
 let isTxtReady = true;
 
+let voice;
+let vol;
+let bgm;
+let playStart = false;
+
 const getSpeech = () => {
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
@@ -87,7 +93,7 @@ const getSpeech = () => {
         const speechResult = event.results[0][0].transcript;
 
         console.log(speechResult);
-        if (line < 48) {
+        if (line < 49) {
             if (isThisLineCorrect(getWordsArray(speechResult), getWordsArray(scripts[line]))) {
                 line4print = stts[line];
                 // console.log(line4print);
@@ -165,6 +171,7 @@ document.addEventListener('keydown', keypressed, false);
 function keypressed(e) {
     if (isDrawingReady && isTxtReady) {
         if (e.keyCode == 32) {  // SPACE
+            playStart = true;
             getSpeech();
         } else if (e.keyCode == 83 || e.keyCode == 39) {   // 's' or ArrowRight
             line4print = stts[line];
@@ -184,6 +191,8 @@ function keypressed(e) {
 let dialogSketch = function (p) {
     p.preload = function () {
         chars = p.loadJSON("assets/char74k-normalized.json");
+        // p.soundFormat('mp3', 'ogg');
+        bgm = p.loadSound('assets/InsideRiver.mp3');
     };
 
     p.setup = function () {
@@ -195,17 +204,24 @@ let dialogSketch = function (p) {
 
     p.draw = function () {
 
+        if (playStart && !bgm.isPlaying()) {
+            bgm.setVolume(1);
+            bgm.play();
+        }
+
         p.background(0, 64);
 
 
         let xoff = 0;
         let yoff = 0;
 
-        if (line == 0 || (line > 45 && line < 48)) {
+        // Title scene / The End / or Another Story
+        if (line == 0 || (line > 45 && line < 49)) {
             p.stroke(190, 128);
 
             let title;
 
+            // Title
             if (scene == 0) {
                 title = "Hope for the Flowers";
             } else {
@@ -233,7 +249,10 @@ let dialogSketch = function (p) {
                 }
                 xoff += charWidth;
             }
-        } else if (line > 1 && line < 46) {
+        }
+
+        // Scene 1 – 7
+        else if (line > 1 && line < 46) {
             p.strokeWeight(2);
             const charWidth = 20;
             const charHeight = 50;
@@ -270,34 +289,7 @@ let dialogSketch = function (p) {
             p.stroke(r, g, b, 128);
 
             // No typing effect
-            /*  for (let ch of line4print) {
-                 if (chars.hasOwnProperty(ch)) {
-                     let form = p.random(chars[ch]);
-                     p.noFill();
-                     for (let stroke of form) {
-                         p.beginShape();
-                         for (let coord of stroke) {
-                             p.vertex(xoff + (coord[0] * 0.1),
-                                 yoff + (coord[1] * 0.1));
-                         }
-                         p.endShape();
-                     }
-                     xoff += charWidth;
-                 }
- 
-                 if (ch == ' ') {
-                     xoff += charWidth;
-                 }
- 
-                 if (xoff > lineBlockWidth || ch == '/') {
-                     xoff = 0;
-                     yoff += charHeight;
-                 }
-             } */
-
-            // Typing effect
-            for (let i = 0; i < charFrame; i++) {
-                ch = line4print[i];
+            for (let ch of line4print) {
                 if (chars.hasOwnProperty(ch)) {
                     let form = p.random(chars[ch]);
                     p.noFill();
@@ -322,6 +314,33 @@ let dialogSketch = function (p) {
                 }
             }
 
+            // Typing effect
+            /* for (let i = 0; i < charFrame; i++) {
+                ch = line4print[i];
+                if (chars.hasOwnProperty(ch)) {
+                    let form = p.random(chars[ch]);
+                    p.noFill();
+                    for (let stroke of form) {
+                        p.beginShape();
+                        for (let coord of stroke) {
+                            p.vertex(xoff + (coord[0] * 0.1),
+                                yoff + (coord[1] * 0.1));
+                        }
+                        p.endShape();
+                    }
+                    xoff += charWidth;
+                }
+
+                if (ch == ' ') {
+                    xoff += charWidth;
+                }
+
+                if (ch == '/') {
+                    xoff = 0;
+                    yoff += charHeight;
+                }
+            } 
+
             if (charFrame < line4print.length) {
                 isTxtReady = false;
                 charFrame++;
@@ -329,14 +348,15 @@ let dialogSketch = function (p) {
 
             if (charFrame >= line4print.length) {
                 isTxtReady = true;
-            }
-        } else if (line == 48) {    // The ending credit 
+            }*/
+
+        } else if (line > 48) {    // The ending credit 
             p.strokeWeight(2);
             p.stroke(220, 128);
             const charWidth = 35;
             const charHeight = 80;
 
-            let endingCredit = stts[47];
+            let endingCredit = stts[48];
 
             p.translate(p.windowWidth / 2 - ((34 * charWidth) / 2), p.windowHeight / 2 - (8 * charHeight / 2));
 
@@ -386,6 +406,10 @@ let drawingSketch = function (p) {
     let mainStrokeWeight = 1;
 
     let bgColor = 100;
+    /*    let bgRed = 100;
+       let bgGreen = 100;
+       let bgBlue = 100; */
+
     let mainColor = 225;
     let prevLineColor = 30;
     let yellowColor = p.color(255, 255, 170);
@@ -406,6 +430,9 @@ let drawingSketch = function (p) {
         p.strokeCap(p.ROUND);
         p.strokeJoin(p.ROUND);
         p.noFill();
+
+        voice = new p5.AudioIn();
+        voice.start();
 
         // converts json data to a 3d array
         // 1st: scenes
@@ -439,6 +466,10 @@ let drawingSketch = function (p) {
     };
 
     p.draw = function () {
+
+        vol = voice.getLevel() * 100;
+        // console.log(vol);
+
         switch (scene) {
             case 1:
                 drawScene1();
@@ -468,6 +499,23 @@ let drawingSketch = function (p) {
 
     function drawScene1() {
         const s1 = scenes[0];
+
+        // console.log(vol);
+
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
 
         // layer 0 (background)
         p.stroke(bgColor);
@@ -632,6 +680,21 @@ let drawingSketch = function (p) {
 
     function drawScene2() {
         const s2 = scenes[1];
+
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
 
         // background
         p.strokeWeight(bgStrokeWeight);
@@ -829,6 +892,21 @@ let drawingSketch = function (p) {
     function drawScene3() {
         const s3 = scenes[2];
 
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
+
         // layer0: background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -934,6 +1012,21 @@ let drawingSketch = function (p) {
 
     function drawScene4() {
         const s4 = scenes[3];
+
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
 
         // layer0: Background
         p.strokeWeight(bgStrokeWeight);
@@ -1106,6 +1199,21 @@ let drawingSketch = function (p) {
 
     function drawScene5() {
         const s5 = scenes[4];
+
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
 
         // background
         p.strokeWeight(bgStrokeWeight);
@@ -1297,6 +1405,21 @@ let drawingSketch = function (p) {
     function drawScene6() {
         const s6 = scenes[5];
 
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
+
         // background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -1416,6 +1539,21 @@ let drawingSketch = function (p) {
     function drawScene7() {
         const s7 = scenes[6];
 
+        if (vol > 5) {
+            bgColor = p.map(vol, 5, 15, 20, 255);
+        }
+
+        if (isDrawingReady && bgColor != 100) {
+            if (bgColor < 100) {
+                bgColor += 10;
+                if (bgColor > 100) bgColor = 100;
+            }
+            else if (bgColor > 100) {
+                bgColor -= 10;
+                if (bgColor < 100) bgColor = 100;
+            }
+        }
+
         // background
         p.strokeWeight(bgStrokeWeight);
         p.stroke(bgColor);
@@ -1509,8 +1647,10 @@ let drawingSketch = function (p) {
                     console.log("Start drawing layer #" + currentLayer);
                     break;
 
+                // Hit the 'next' button
                 case 46:
                     p.clear();
+                    line4print = '';
                     changeScene(8);
                     break;
 
